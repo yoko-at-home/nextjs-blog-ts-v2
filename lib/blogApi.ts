@@ -1,10 +1,23 @@
 import axios from "axios";
-import { POST } from "./type";
+import { READ_BLOG } from "./type";
 
 export const apiUrl = `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/blog/`;
-export const blogGet = (url) => axios.get(url).then((res) => res.data);
-export const blogGetPk = (url, id) =>
-  axios.get(`${url}${id}/`).then((res) => res.data);
+
+// 検索
+export const blogGet = (url) =>
+  axios.get<READ_BLOG[]>(url).then((res) => res.data);
+// PKで検索
+export const blogGetPk = (url) =>
+  axios.get<READ_BLOG>(url).then((res) => res.data);
+// 削除
+export const blogDelete = (url, id) =>
+  axios.delete(`${url}${id}/`).then((res) => res);
+// 新規登録
+export const blogPost = (url, blog) =>
+  axios.post<READ_BLOG>(url, blog).then((res) => res.data);
+// 更新
+export const blogPut = (url, id, blog) =>
+  axios.put<READ_BLOG>(`${url}${id}/`, blog).then((res) => res.data);
 
 // ------------------------------------
 // ブログデータの全件取得
@@ -16,15 +29,7 @@ export const getSortedPostsData = async () => {
     if (a.created_at > b.created_at) return -1;
     return 0;
   });
-  const allPostsData: POST[] = filteredBlogs.map((blog) => {
-    return {
-      id: blog.id,
-      title: blog.title,
-      content: blog.content,
-      date: blog.created_at,
-    };
-  });
-  return allPostsData;
+  return filteredBlogs;
 };
 
 // ------------------------------------
@@ -46,13 +51,6 @@ export const getAllPostIds = async () => {
 // ------------------------------------
 export const getPostData = async (id?: string) => {
   if (!id) return null;
-  const blog = await blogGetPk(apiUrl, id);
-
-  const blogData: POST = {
-    id: blog.id,
-    title: blog.title,
-    content: blog.content,
-    date: blog.created_at,
-  };
-  return blogData;
+  const blog = await blogGetPk(`${apiUrl}${id}/`);
+  return blog;
 };

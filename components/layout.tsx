@@ -7,10 +7,10 @@ import React, { FC, ReactNode } from "react";
 const name = "Your Name";
 export const siteTitle = "Next.js Sample Website";
 
-interface Props {
+type Props = {
   children: ReactNode;
   home?: boolean;
-}
+};
 
 const Layout: FC<Props> = ({ children, home = false }) => {
   return (
